@@ -4,16 +4,63 @@ author: "Markus Lidström"
 date: "11/12/2018"
 output: pdf_document
 ---
-
-# Exercise 1:1
 ```{r generate freq table}
 tab1 <- as.table(rbind(c(309,191),c(319,281)))
 dimnames(tab1) <- list(gender = c("women","men"), opinion = c("favor", "against"))
 addmargins(tab1)
 addmargins(prop.table(tab1,1),2) # row percentages
 addmargins(prop.table(tab1,1),1) # column percentages
-prop.table(tab1)
+prop <- prop.table(tab1)
 ```
+# Exercise 1:1
+## 1
+```{r}
+men_favour <- 319/600
+women_favour <- 309/500
+men_favour
+women_favour
+prop
+```
+
+For the percentage of men/women in favour, we have 600 men where 319 are in favour so $319/600= men_favour$ and we have 500 women where 309 are in favour so $319/600= women_favour$.
+
+## 2
+Let $\theta$ be the odds ratio then we have $$H_0:(\pi_{men},\pi_{women})=(\pi,\pi)$$ $$H_a:(\pi_{men},\pi_{women})\neq(\pi,\pi)$$
+Under $H_0$ the proportion of the population in favour of abortion is 628/1100=p and thus under $H_0$ $\mu_{men,in favour}=600p$,$\mu_{women,in favour}=500p$, $\mu_{men,against}=600(1-p)$,$\mu_{women,against}=500(1-p)$ and then we can easily calculate $$G^2 = 2\sum_{j=1}^4n_jlog(n_j/\mu_j)$$ and $$X^2 = \sum_{j=1}^4(n_j-\mu_j)^2/\mu_j$$
+
+## 3
+
+```{r}
+## see page 70
+309*281/(319*191) ## odds ratio women more in favour
+th <- log(309*281/(319*191))
+SE <- sqrt(1/309+1/281+1/319+1/191)
+ci <- qnorm(c(0.025,0.975))*SE+th
+ci
+exp(ci)
+```
+
+## 4
+```{r}
+rci <- log(women_favour/men_favour) + qnorm(c(0.025,0.975)) * sqrt((1-men_favour)/600 + (1-women_favour)/500)
+exp(rci)
+```
+
+```{r}
+proportion <- 628/1100
+umen <- 600*proportion
+uwomen <- 500*proportion
+G <- 2*(319*log(319/umen)+
+         309*log(309/uwomen)+
+         281*log(281/(600-umen))+
+         191*log(191/(500-uwomen)))
+
+X <- (319-umen)^2/umen + (309-uwomen)^2/uwomen + (281-(600-umen))^2/(600-umen) + (191-(500-uwomen))^2/(500-uwomen)  
+G
+X
+```
+
+
 
 ```{r calculate X^2 G^2 p-values} 
 chisq.test(tab1,correct=FALSE)
