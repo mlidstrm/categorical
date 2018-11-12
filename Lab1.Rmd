@@ -1,0 +1,34 @@
+---
+title: "Lab 1"
+author: "Markus Lidström"
+date: "11/12/2018"
+output: pdf_document
+---
+
+# Exercise 1:1
+```{r generate freq table}
+tab1 <- as.table(rbind(c(309,191),c(319,281)))
+dimnames(tab1) <- list(gender = c("women","men"), opinion = c("favor", "against"))
+addmargins(tab1)
+addmargins(prop.table(tab1,1),2) # row percentages
+addmargins(prop.table(tab1,1),1) # column percentages
+prop.table(tab1)
+```
+
+```{r calculate X^2 G^2 p-values} 
+chisq.test(tab1,correct=FALSE)
+library(MASS)
+loglm(~gender+opinion,tab1)
+```
+
+```{r calculate risk/odds ratio and CI}
+library(epitools)
+oddsratio(tab1,rev="neither")
+riskratio(tab1,rev="neither")
+```
+
+# Exercise 1:2
+
+# Exercise 1:3
+
+
